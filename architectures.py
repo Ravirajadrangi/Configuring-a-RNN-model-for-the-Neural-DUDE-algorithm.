@@ -1,11 +1,14 @@
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten, Reshape
-from keras.layers.recurrent import SimpleRNN
+from keras.layers.recurrent import SimpleRNN, LSTM
+
+def nn_model_select(k, nb_classes):
+    return RNN(k, nb_classes)
 
 def DNN40(k, nb_classes):
     model=Sequential()
-    model.add(Dense(40,input_dim=2*k*nb_classes,init='he_normal'))
+    model.add(Dense(40,input_dim=2*k*nb_classes,kernel_initializer='he_normal'))
     model.add(Activation('relu'))
     model.add(Dense(40,kernel_initializer='he_normal'))
     model.add(Activation('relu'))

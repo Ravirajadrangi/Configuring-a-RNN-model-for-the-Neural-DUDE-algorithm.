@@ -46,7 +46,7 @@ def dude(z,k,delta):
         context=z[i-k:i].tolist()+z[i+1:i+k+1].tolist()
         context_str = ''.join(str(e) for e in context)
         
-        if not m.has_key(context_str):
+        if context_str not in m:
             m[context_str]=np.zeros(2,dtype=np.int)
             m[context_str][z[i]]=1
         else:
@@ -79,7 +79,7 @@ def dude2(z,k,delta):
         context=z[i-k:i].tolist()+z[i+1:i+k+1].tolist()
         context_str = ''.join(str(e) for e in context)
         
-        if not m.has_key(context_str):
+        if context_str not in m:
             m[context_str]=np.zeros(2,dtype=np.int)
             m[context_str][z[i]]=1
         else:
