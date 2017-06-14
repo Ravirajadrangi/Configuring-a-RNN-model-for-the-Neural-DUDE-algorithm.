@@ -1,17 +1,17 @@
-
-# coding: utf-8
-
-# In[1]:
-
 import numpy as np
 from numpy import *
 
-# In[3]:
+# --------------------------------------------------
+# This script is a direct copy of the code provided 
+# by Prof. Moon
+# --------------------------------------------------
 
 def bit_xor(a,b):
+	"""XOR two bits"""
     return int(bool(a)^bool(b))
 
 def error_rate(a,b):
+	"""Calculate average hamming loss between two signals"""
     error=np.zeros(len(a))
     for i in range(len(a)):
         error[i]=bit_xor(a[i],b[i])
@@ -19,6 +19,7 @@ def error_rate(a,b):
     
 
 def bsmc(n,alpha):
+	"""Create n-length binary markov chain with switching probability alpha"""
     a=np.zeros(n,dtype=np.int)
     a[0]=int(np.random.random()>0.5)
 
@@ -28,6 +29,7 @@ def bsmc(n,alpha):
     return a
 
 def bsc(x,delta):
+	"""Run signal x through a BSC(delta) channel"""
     z=np.zeros(len(x),dtype=np.int)
     for i in range(len(x)):
         noise=int(np.random.random()<delta)
@@ -35,7 +37,16 @@ def bsc(x,delta):
     return z
         
 def dude(z,k,delta):
-   # print "Running DUDE algorithm"
+	"""Run noisy signal z from BSC(delta) through DUDE algorithm
+	
+	Arguments
+	z -- noisy signal
+	k -- context size
+	delta -- BSC noise parameter
+	
+	Output
+	x_hat -- estimation based off noisy signal
+	"""
     n=len(z)
     x_hat=np.zeros(n,dtype=np.int)
 
@@ -65,7 +76,18 @@ def dude(z,k,delta):
     return x_hat
  
 def dude2(z,k,delta):
-   # print "Running DUDE algorithm"
+	"""Run noisy signal z from BSC(delta) through DUDE algorithm,
+	this time using 3-class (0/1/no-change) estimation functions
+	
+	Arguments:
+	z -- noisy signal
+	k -- context size
+	delta -- BSC noise parameter
+	
+	Output:
+	s_hat -- 3-class estimator indexes based off noisy signal
+	m -- contexts
+	"""
     n=len(z)
     x_hat=np.zeros(n,dtype=np.int)
     s_hat=x_hat.copy()
@@ -101,8 +123,24 @@ def dude2(z,k,delta):
     return s_hat, m
      
 def denoise_with_s(z,s,k):
+	"""Denoise noisy signal z with estimator functions
+	
+	Arguments:
+	z -- noisy signal
+	s -- array of estimator indexes
+	k - context width
+	
+	Outputs:
+	x_hat -- estimated denoised signal
+	"""
     n=len(z)
     x_hat=z.copy()
+	# 3 different estimators:
+	#    0: don't change
+	#    1: set to 0
+	#    2: set to 1
+	# "change" estimator not necessary
+	# as BSC channel has p < 0.5
     for i in range(k,n-k):
         if s[i]==0:
             x_hat[i]=z[i]
@@ -112,8 +150,24 @@ def denoise_with_s(z,s,k):
             x_hat[i]=1
     return x_hat
 
-
+# --------------------------------------------------
+# This function has been replaced by batch_generate
+# in main code
+# --------------------------------------------------
 def make_data_for_ndude(Z,k,L,nb_classes,n):
+	"""Generate data for neural net
+	
+	Arguments:
+	Z -- noisy signal
+	k -- context width
+	L -- loss vector
+	nb_classes -- alphabet size (2 for binary)
+	n -- signal length
+	
+	Outputs:
+	C -- arranged data matrix for input to nn
+	Y -- modified loss vector for use in nn cost function
+	"""
     c_length=2*k
     C=np.zeros((n-2*k, 2*k*nb_classes))
 
@@ -125,6 +179,14 @@ def make_data_for_ndude(Z,k,L,nb_classes,n):
     return C,Y
 
 def make_binary_image(im):
+	"""Convert grayscale image to binary image
+	
+	Arguments:
+	im -- 8-bit grayscale image
+	
+	Outputs:
+	im_bin -- binary image
+	"""
     im_bin=im.copy()
     for i in range(im.shape[0]):
         for j in range(im.shape[1]):
@@ -134,43 +196,3 @@ def make_binary_image(im):
                 im_bin[i,j]=0
     
     return im_bin
-
-# In[7]:
-
-#n=10000
-#print n
-#alpha=0.1
-#delta=0.1
-#
-#x=bsmc(n,alpha)
-## print x
-#
-#z=bsc(x,delta)
-## print z
-#
-#error = error_rate(x,z)
-#print error
-#
-#err_k=np.zeros(6)
-#for k in range(0,6):
-#    x_hat= dude(z,k,delta)
-#
-#    error =error_rate(x,x_hat)
-#    err_k[k]=error
-#    print error
-#    
-#k=range(0,6)
-#plt.plot(k,err_k)
-# print m['1111']
-# print m['1111'][0]
-# print np.sum(m['1111'])
-# print float(m['1111'][0]) / float(np.sum(m['1111']))
-        
-    
-
-
-
-# In[ ]:
-
-
-
